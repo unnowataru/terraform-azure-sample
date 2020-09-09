@@ -11,6 +11,8 @@ variable "usr_vnet_range" {}            # 仮想ネットワークのレンジ
 variable "usr_subnet_name" {}           # サブネット名
 variable "usr_subnet_range" {}          # サブネットのレンジ
 variable "usr_nic_name" {}              # ネットワークインターフェース名
+variable "usr_pip_name" {}              # パブリックIP名
+variable "usr_nsg_name" {}              # ネットワークセキュリティグループ名
 variable "usr_vm_name" {}               # 仮想マシン名
 variable "usr_vm_size" {}               # 仮想マシンのインスタンスサイズ
 variable "usr_vm_username" {}           # 仮想マシンの管理者名
@@ -44,6 +46,13 @@ resource "azurerm_subnet" "subnet_tf" {
   address_prefix       = var.usr_subnet_range
 }
 
+resource "azurerm_public_ip" "pip_tf" {
+    name                         = var.usr_pip_name
+    location                     = azurerm_resource_group.rg_tf.location
+    resource_group_name          = azurerm_resource_group.rg_tf.name
+    allocation_method            = "Dynamic"
+}
+
 resource "azurerm_network_interface" "nic_tf" {
   name                = var.usr_nic_name
   location            = azurerm_resource_group.rg_tf.location
@@ -53,7 +62,32 @@ resource "azurerm_network_interface" "nic_tf" {
     name                          = azurerm_subnet.subnet_tf.name
     subnet_id                     = azurerm_subnet.subnet_tf.id
     private_ip_address_allocation = "Dynamic"
+    public_ip_address_id          = azurerm_public_ip.pip_tf.id
   }
+}
+
+# Connect the security group to the network interface
+resource "azurerm_network_interface_security_group_association" "connectivity_tf" {
+    network_interface_id      = azurerm_network_interface.nic_tf.id
+    network_security_group_id = azurerm_network_security_group.nsg_tf.id
+}
+
+resource "azurerm_network_security_group" "nsg_tf" {
+    name                = var.usr_nsg_name
+    location            = azurerm_resource_group.rg_tf.location
+    resource_group_name = azurerm_resource_group.rg_tf.name
+    
+    security_rule {
+        name                       = "RDP"
+        priority                   = 1001
+        direction                  = "Inbound"
+        access                     = "Allow"
+        protocol                   = "Tcp"
+        source_port_range          = "*"
+        destination_port_range     = "3389"
+        source_address_prefix      = "*"
+        destination_address_prefix = "*"
+    }
 }
 
 resource "azurerm_windows_virtual_machine" "vm_tf" {
