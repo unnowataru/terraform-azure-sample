@@ -1,6 +1,6 @@
 # Azure の初期設定を Cloud Shell から実行
 ## Terraform 用のアプリケーションを作って、
-az ad app create --display-name Terraform-Sample --password P@ssw0rd123!
+az ad app create --display-name Terraform-Sample --password S@mp!eP@ssw0rd
 ## そのアプリのサービスプリンシパルを作って、
 az ad sp create --id a1e565e8-XXXX-YYYY-ZZZZ-f078d8c19c12
 ## サービスプリンシパルに Contributor の権限を付与する。
