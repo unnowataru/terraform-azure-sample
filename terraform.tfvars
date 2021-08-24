@@ -16,4 +16,4 @@ usr_nsg_name = "Sample-NSG"                                        # ネット�
 usr_vm_name = "TFVM0001"                                           # 仮想マシン名
 usr_vm_size = "Standard_D2s_v3"                                    # 仮想マシンのインスタンスサイズ
 usr_vm_username = "AzureUser"                                      # 仮想マシンの管理者名
-usr_vm_password = "P@ssw0rdP@ssw0rd"                               # 仮想マシンのパスワード
+usr_vm_password = "Netw0rld123!"                                   # 仮想マシンのパスワード
