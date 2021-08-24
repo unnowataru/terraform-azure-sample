@@ -1,6 +1,6 @@
 usr_subscription_id = "29b8cd9d-XXXX-YYYY-ZZZZ-c25559f95690"       # サブスクリプションID (調べる)
 usr_client_id = "cd203aa2-XXXX-YYYY-ZZZZ-4d438d06fdbb"             # クライアントID (アプリを登録したときに自動生成される)
-usr_client_secret = "Netw0rld123!"                               # シークレット/パスワード (サービスプリンシパルを作ったときに入力している)
+usr_client_secret = "Netw0rld123!"                                 # シークレット/パスワード (サービスプリンシパルを作ったときに入力している)
 usr_tenant_id = "515126a5-XXXX-YYYY-ZZZZ-f8803bce7f3d"             # テナントID (調べる)
 usr_region = "JapanEast"                                           # リージョン指定
 usr_rg_name = "Sample-RG"                                          # リソースグループ名
