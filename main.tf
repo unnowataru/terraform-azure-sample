@@ -18,6 +18,10 @@ variable "usr_vm_size" {}               # 仮想マシンのインスタンス�
 variable "usr_vm_username" {}           # 仮想マシンの管理者名
 variable "usr_vm_password" {}           # 仮想マシンのパスワード
 
+variable "usr_bastion_subnet_name" {}   # Bastion用のサブネット名
+variable "usr_bastion_subnet_range" {}  # Bastion用のサブネットのレンジ
+variable "usr_bastion_pip_name" {}      # Bastion用のパブリックIP名
+variable "usr_bastion_name" {}          # Bastionの名前
 
 provider "azurerm" {
   features {}
@@ -43,7 +47,7 @@ resource "azurerm_subnet" "subnet_tf" {
   name                 = var.usr_subnet_name
   resource_group_name  = azurerm_resource_group.rg_tf.name
   virtual_network_name = azurerm_virtual_network.vnet_tf.name
-  address_prefix       = var.usr_subnet_range
+  address_prefixes       = var.usr_subnet_range
 }
 
 resource "azurerm_public_ip" "pip_tf" {
@@ -111,5 +115,33 @@ resource "azurerm_windows_virtual_machine" "vm_tf" {
     offer     = "WindowsServer"
     sku       = "2019-Datacenter"
     version   = "latest"
+  }
+}
+
+# for Bastion Provisioning
+resource "azurerm_subnet" "subnet-bastion" {
+  name                 = var.usr_bastion_subnet_name
+  resource_group_name  = azurerm_resource_group.rg_tf.name
+  virtual_network_name = azurerm_virtual_network.vnet_tf.name
+  address_prefixes     = var.usr_bastion_subnet_range
+}
+
+resource "azurerm_public_ip" "pip-bastion" {
+  name                = var.usr_bastion_pip_name
+  location            = azurerm_resource_group.rg_tf.location
+  resource_group_name = azurerm_resource_group.rg_tf.name
+  allocation_method   = "Static"
+  sku                 = "Standard"
+}
+
+resource "azurerm_bastion_host" "bastion" {
+  name                = var.usr_bastion_name
+  location            = azurerm_resource_group.rg_tf.location
+  resource_group_name = azurerm_resource_group.rg_tf.name
+
+  ip_configuration {
+    name                 = "configuration"
+    subnet_id            = azurerm_subnet.subnet-bastion.id
+    public_ip_address_id = azurerm_public_ip.pip-bastion.id
   }
 }
